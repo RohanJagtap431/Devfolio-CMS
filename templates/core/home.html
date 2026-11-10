@@ -1,0 +1,488 @@
+
+{% extends "core/base.html" %}
+
+{% block title %}
+    {% if site_settings %}{{ site_settings.meta_title|default:site_settings.site_name }}{% elif profile %}{{ profile.full_name }} | Portfolio{% else %}Developer Portfolio{% endif %}
+{% endblock %}
+
+{% block meta_description %}
+    {% if site_settings %}{{ site_settings.meta_description }}{% elif profile %}{{ profile.short_bio }}{% endif %}
+{% endblock %}
+
+{% block content %}
+
+<!-- HERO SECTION -->
+<section class="hero" id="home">
+    <div class="container hero-grid">
+
+        <div class="hero-content">
+
+            <span class="hero-badge">
+                <span class="status-dot"></span>
+                {% if profile and profile.is_available_for_work %}
+                    Available for Opportunities
+                {% else %}
+                    Developer Portfolio
+                {% endif %}
+            </span>
+
+            <p class="hero-greeting">Hello, I'm</p>
+
+            <h1 class="hero-title">
+                {% if profile %}
+                    {{ profile.full_name }}
+                {% else %}
+                    Your Name
+                {% endif %}
+            </h1>
+
+            <h2 class="hero-role">
+                {% if profile %}
+                    {{ profile.professional_title }}
+                {% else %}
+                    Python Django Backend Developer
+                {% endif %}
+            </h2>
+
+            <p class="hero-description">
+                {% if profile %}
+                    {{ profile.short_bio }}
+                {% else %}
+                    Welcome to my developer portfolio.
+                {% endif %}
+            </p>
+
+            <div class="hero-actions">
+                <a href="#projects" class="btn btn-primary">
+                    Explore My Work
+                </a>
+
+                <a href="#contact" class="btn btn-outline">
+                    Contact Me
+                </a>
+            </div>
+
+            {% if profile %}
+            <div class="hero-socials">
+
+                {% if profile.github_url %}
+                    <a href="{{ profile.github_url }}"
+                       target="_blank"
+                       rel="noopener noreferrer">GitHub ↗</a>
+                {% endif %}
+
+                {% if profile.linkedin_url %}
+                    <a href="{{ profile.linkedin_url }}"
+                       target="_blank"
+                       rel="noopener noreferrer">LinkedIn ↗</a>
+                {% endif %}
+
+            </div>
+            {% endif %}
+
+        </div>
+
+        <div class="hero-image-wrapper">
+            {% if profile and profile.profile_photo %}
+                <img
+                    src="{{ profile.profile_photo.url }}"
+                    alt="{{ profile.full_name }}"
+                    class="hero-image"
+                >
+            {% else %}
+                <div class="hero-placeholder">
+                    <span>DEV</span>
+                </div>
+            {% endif %}
+        </div>
+
+    </div>
+</section>
+
+
+<!-- ABOUT SECTION -->
+{% if profile %}
+<section id="about" class="about-section">
+    <div class="container">
+
+        <div class="section-heading">
+            <span class="section-label">ABOUT ME</span>
+            <h2 class="section-title">Get to Know Me</h2>
+        </div>
+
+        <div class="about-card card">
+            <p>{{ profile.about_me|linebreaksbr }}</p>
+
+            {% if profile.location %}
+                <p class="about-location">
+                    <strong>Location:</strong>
+                    {{ profile.location }}
+                </p>
+            {% endif %}
+        </div>
+
+    </div>
+</section>
+{% endif %}
+
+
+<!-- SKILLS SECTION -->
+{% if skills %}
+<section id="skills" class="skills-section">
+    <div class="container">
+
+        <div class="section-heading">
+            <span class="section-label">MY EXPERTISE</span>
+            <h2 class="section-title">Skills & Technologies</h2>
+            <p class="section-description">
+                Technologies and tools I work with.
+            </p>
+        </div>
+
+        <div class="skills-grid">
+
+            {% for skill in skills %}
+            <div class="skill-card card">
+
+                <div class="skill-info">
+                    <h3>{{ skill.name }}</h3>
+                    <span>{{ skill.proficiency }}%</span>
+                </div>
+
+                <div class="skill-track">
+                    <div class="skill-progress"
+                         style="width: {{ skill.proficiency }}%">
+                    </div>
+                </div>
+
+                <span class="skill-category">
+                    {{ skill.get_category_display }}
+                </span>
+
+            </div>
+            {% endfor %}
+
+        </div>
+
+    </div>
+</section>
+{% endif %}
+
+
+<!-- PROJECTS SECTION -->
+{% if projects and site_settings.show_projects_section|default:True %}
+<section id="projects" class="projects-section">
+    <div class="container">
+
+        <div class="section-heading">
+            <span class="section-label">MY WORK</span>
+            <h2 class="section-title">Featured Projects</h2>
+            <p class="section-description">
+                Some applications and solutions I have built.
+            </p>
+        </div>
+
+        <div class="projects-grid">
+
+            {% for project in featured_projects %}
+            <article class="project-card card">
+
+                {% if project.thumbnail %}
+                    <img
+                        src="{{ project.thumbnail.url }}"
+                        alt="{{ project.title }}"
+                        class="project-image"
+                        loading="lazy"
+                    >
+                {% endif %}
+
+                <div class="project-content">
+
+                    {% if project.status == "completed" %}
+                        <span class="project-status status-completed">
+                            {{ project.get_status_display }}
+                        </span>
+
+                    {% elif project.status == "in_progress" %}
+                        <span class="project-status status-progress">
+                            {{ project.get_status_display }}
+                        </span>
+
+                    {% elif project.status == "planned" %}
+                        <span class="project-status status-planned">
+                            {{ project.get_status_display }}
+                        </span>
+                    {% endif %}
+
+                    <h3>{{ project.title }}</h3>
+
+                    <p>{{ project.short_description }}</p>
+
+                    <div class="project-tech">
+                        {{ project.technologies }}
+                    </div>
+
+                    <div class="project-links">
+
+                        {% if project.github_url %}
+                            <a href="{{ project.github_url }}"
+                               target="_blank"
+                               rel="noopener noreferrer">
+                                GitHub ↗
+                            </a>
+                        {% endif %}
+
+                        {% if project.live_demo_url %}
+                            <a href="{{ project.live_demo_url }}"
+                               target="_blank"
+                               rel="noopener noreferrer">
+                                Live Demo ↗
+                            </a>
+                        {% endif %}
+
+                        <a href="{% url 'project_detail' project.slug %}"
+                        class="btn btn-primary">
+                            View Details →
+                        </a>
+
+                    </div>
+
+                </div>
+            </article>
+            {% empty %}
+                <p>No featured projects available yet.</p>
+            {% endfor %}
+
+        </div>
+
+    </div>
+</section>
+{% endif %}
+
+
+
+<!-- EXPERIENCE SECTION -->
+
+{% if experiences %}
+<section id="experience" class="experience-section">
+
+    <div class="container">
+
+        <div class="section-heading">
+            <span class="section-label">MY JOURNEY</span>
+            <h2 class="section-title">Experience & Journey</h2>
+            <p class="section-description">
+                My professional experience, internships and learning journey.
+            </p>
+        </div>
+
+        <div class="experience-timeline">
+
+            {% for item in experiences %}
+
+            <article class="experience-item">
+
+                <div class="experience-timeline-dot"></div>
+
+                <div class="experience-card card">
+
+                    <div class="experience-header">
+
+                        <div>
+                            <h3>{{ item.job_title }}</h3>
+                            <h4>{{ item.company_name }}</h4>
+                        </div>
+
+                        <span class="experience-type">
+                            {{ item.get_experience_type_display }}
+                        </span>
+
+                    </div>
+
+                    <div class="experience-meta">
+
+                        <span>
+                            {{ item.start_date|date:"M Y" }}
+                            —
+                            {% if item.is_current %}
+                                Present
+                            {% elif item.end_date %}
+                                {{ item.end_date|date:"M Y" }}
+                            {% endif %}
+                        </span>
+
+                        {% if item.location %}
+                            <span>{{ item.location }}</span>
+                        {% endif %}
+
+                    </div>
+
+                    {% if item.description %}
+                        <div class="experience-description">
+                            {{ item.description|linebreaksbr }}
+                        </div>
+                    {% endif %}
+
+                    {% if item.company_website %}
+                        <a href="{{ item.company_website }}"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           class="experience-link">
+                            Visit Organization ↗
+                        </a>
+                    {% endif %}
+
+                </div>
+
+            </article>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</section>
+{% endif %}
+
+
+
+
+<!-- CERTIFICATES SECTION -->
+
+{% if certificates %}
+<section id="certificates" class="certificates-section">
+
+    <div class="container">
+
+        <div class="section-heading">
+            <span class="section-label">ACHIEVEMENTS</span>
+            <h2 class="section-title">Certifications & Achievements</h2>
+            <p class="section-description">
+                My learning journey, certifications and achievements.
+            </p>
+        </div>
+
+        <div class="certificates-grid">
+
+            {% for certificate in certificates %}
+
+            <article class="certificate-card card">
+
+                <div class="certificate-icon">
+                    <span>🏆</span>
+                </div>
+
+                <div class="certificate-content">
+
+                    <h3>{{ certificate.title }}</h3>
+
+                    <p class="certificate-organization">
+                        {{ certificate.issuing_organization }}
+                    </p>
+
+                    {% if certificate.description %}
+                        <p class="certificate-description">
+                            {{ certificate.description|linebreaksbr }}
+                        </p>
+                    {% endif %}
+
+                    <div class="certificate-meta">
+
+                        <span>
+                            <strong>Issued:</strong>
+                            {{ certificate.issue_date|date:"M Y" }}
+                        </span>
+
+                        {% if certificate.expiry_date %}
+                            <span>
+                                <strong>Expires:</strong>
+                                {{ certificate.expiry_date|date:"M Y" }}
+                            </span>
+                        {% endif %}
+
+                    </div>
+
+                    {% if certificate.credential_id %}
+                        <p class="certificate-id">
+                            Credential ID: {{ certificate.credential_id }}
+                        </p>
+                    {% endif %}
+
+                    <div class="certificate-actions">
+
+                        {% if certificate.credential_url %}
+                            <a href="{{ certificate.credential_url }}"
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               class="btn btn-primary">
+                                Verify Certificate ↗
+                            </a>
+                        {% endif %}
+
+                        {% if certificate.certificate_file %}
+                            <a href="{{ certificate.certificate_file.url }}"
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               class="btn btn-outline">
+                                View Certificate ↗
+                            </a>
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </article>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</section>
+{% endif %}
+
+
+
+<!-- CONTACT SECTION -->
+{% if profile and site_settings.show_contact_section|default:True %}
+<section id="contact" class="contact-section">
+    <div class="container">
+
+        <div class="section-heading">
+            <span class="section-label">GET IN TOUCH</span>
+            <h2 class="section-title">Let's Work Together</h2>
+            <p class="section-description">
+                Have an opportunity or project in mind?
+                Feel free to contact me.
+            </p>
+        </div>
+
+        <div class="contact-card card">
+
+            <p>Email</p>
+
+            <a href="mailto:{{ profile.email }}"
+               class="contact-email">
+                {{ profile.email }}
+            </a>
+
+            <a href="{% url 'contact_submit' %}" class="btn btn-primary">
+                Send Me a Message →
+            </a>
+
+            {% if profile.location %}
+                <p class="contact-location">
+                    {{ profile.location }}
+                </p>
+            {% endif %}
+
+        </div>
+
+    </div>
+</section>
+{% endif %}
+
+{% endblock %}

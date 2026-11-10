@@ -1,0 +1,218 @@
+
+{% extends "core/base.html" %}
+
+{% block title %}
+    {{ project.title }} | Devfolio
+{% endblock %}
+
+{% block meta_description %}
+    {{ project.short_description }}
+{% endblock %}
+
+{% block content %}
+
+<section class="project-detail-section">
+    <div class="container">
+
+        <a href="{% url 'home' %}#projects"
+           class="project-back-link">
+            ← Back to Projects
+        </a>
+
+        <div class="project-detail-card card">
+
+            {% if project.thumbnail %}
+                <img
+                    src="{{ project.thumbnail.url }}"
+                    alt="{{ project.title }}"
+                    class="project-detail-image"
+                >
+            {% endif %}
+
+            <div class="project-detail-content">
+
+                <!-- PROJECT STATUS -->
+
+                {% if project.status == "completed" %}
+                    <span class="project-status status-completed">
+                        {{ project.get_status_display }}
+                    </span>
+                {% elif project.status == "in_progress" %}
+                    <span class="project-status status-progress">
+                        {{ project.get_status_display }}
+                    </span>
+                {% elif project.status == "planned" %}
+                    <span class="project-status status-planned">
+                        {{ project.get_status_display }}
+                    </span>
+                {% endif %}
+
+
+                <!-- PROJECT TITLE -->
+
+                <h1>{{ project.title }}</h1>
+
+                <p class="project-detail-short">
+                    {{ project.short_description }}
+                </p>
+
+
+                <!-- PROJECT DESCRIPTION -->
+
+                <div class="project-detail-description">
+                    {{ project.description|linebreaks }}
+                </div>
+
+
+                <!-- KEY FEATURES -->
+
+                {% with features=project.features.all %}
+                {% if features %}
+                <section class="project-features-section">
+
+                    <h2>Key Features</h2>
+
+                    <div class="project-features-grid">
+
+                        {% for feature in features %}
+
+                        <article class="project-feature-card">
+
+                            <h3>{{ feature.title }}</h3>
+
+                            {% if feature.description %}
+                                <p>
+                                    {{ feature.description|linebreaksbr }}
+                                </p>
+                            {% endif %}
+
+                        </article>
+
+                        {% endfor %}
+
+                    </div>
+
+                </section>
+                {% endif %}
+                {% endwith %}
+
+
+                <!-- CHALLENGES & SOLUTIONS -->
+
+                {% with challenges=project.challenges.all %}
+                {% if challenges %}
+                <section class="project-challenges-section">
+
+                    <h2>Challenges & Solutions</h2>
+
+                    <div class="project-challenges-grid">
+
+                        {% for item in challenges %}
+
+                        <article class="project-challenge-card">
+
+                            <div class="challenge-heading">
+                                <span>CHALLENGE</span>
+                                <h3>{{ item.challenge }}</h3>
+                            </div>
+
+                            <div class="solution-heading">
+                                <span>SOLUTION</span>
+                                <p>{{ item.solution|linebreaksbr }}</p>
+                            </div>
+
+                        </article>
+
+                        {% endfor %}
+
+                    </div>
+
+                </section>
+                {% endif %}
+                {% endwith %}
+
+
+                <!-- PROJECT GALLERY -->
+
+                {% with gallery=project.gallery.all %}
+                {% if gallery %}
+                <section class="project-gallery-section">
+
+                    <h2>Project Gallery</h2>
+
+                    <div class="project-gallery-grid">
+
+                        {% for item in gallery %}
+
+                        <figure class="project-gallery-item">
+
+                            <img
+                                src="{{ item.image.url }}"
+                                alt="{{ item.caption|default:project.title }}"
+                                loading="lazy"
+                            >
+
+                            {% if item.caption %}
+                                <figcaption>
+                                    {{ item.caption }}
+                                </figcaption>
+                            {% endif %}
+
+                        </figure>
+
+                        {% endfor %}
+
+                    </div>
+
+                </section>
+                {% endif %}
+                {% endwith %}
+
+
+                <!-- TECHNOLOGIES -->
+
+                <div class="project-detail-tech">
+
+                    <h3>Technologies Used</h3>
+
+                    <p>{{ project.technologies }}</p>
+
+                </div>
+
+
+                <!-- PROJECT LINKS -->
+
+                <div class="project-detail-actions">
+
+                    {% if project.github_url %}
+                        <a
+                            href="{{ project.github_url }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="btn btn-primary"
+                        >
+                            GitHub Repository ↗
+                        </a>
+                    {% endif %}
+
+                    {% if project.live_demo_url %}
+                        <a
+                            href="{{ project.live_demo_url }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="btn btn-outline"
+                        >
+                            Live Demo ↗
+                        </a>
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

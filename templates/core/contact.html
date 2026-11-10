@@ -1,0 +1,81 @@
+
+{% extends "core/base.html" %}
+
+{% block title %}Contact Me | Devfolio{% endblock %}
+
+{% block content %}
+
+<section class="contact-page">
+    <div class="container">
+
+        <div class="section-heading">
+            <span class="section-label">GET IN TOUCH</span>
+            <h1 class="section-title">Let's Start a Conversation</h1>
+            <p class="section-description">
+                Have a project, opportunity, or question?
+                Send me a message.
+            </p>
+        </div>
+
+        <div class="contact-form-wrapper card">
+
+            <form method="POST" action="{% url 'contact_submit' %}">
+                {% csrf_token %}
+
+                <div class="form-honeypot" aria-hidden="true">
+                    <label for="id_website">Leave this field empty</label>
+                    <input
+                        type="text"
+                        name="website"
+                        id="id_website"
+                        tabindex="-1"
+                        autocomplete="off"
+                    >
+                </div>
+
+                {% if form.non_field_errors %}
+                    <div class="form-error">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                <div class="form-group">
+                    <label for="{{ form.name.id_for_label }}">Your Name</label>
+                    {{ form.name }}
+                    {{ form.name.errors }}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.email.id_for_label }}">Email Address</label>
+                    {{ form.email }}
+                    {{ form.email.errors }}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.subject.id_for_label }}">Subject</label>
+                    {{ form.subject }}
+                    {{ form.subject.errors }}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.message.id_for_label }}">Your Message</label>
+                    {{ form.message }}
+                    {{ form.message.errors }}
+                </div>
+
+                <button type="submit" class="btn btn-primary contact-submit">
+                    Send Message →
+                </button>
+
+            </form>
+
+        </div>
+
+        <div class="contact-back">
+            <a href="{% url 'home' %}">← Back to Homepage</a>
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}
