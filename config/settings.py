@@ -54,10 +54,6 @@ CSRF_TRUSTED_ORIGINS = [
 # --------------------------------------------------
 
 INSTALLED_APPS = [
-    # Cloudinary
-    "cloudinary_storage",
-    "cloudinary",
-
     # Django built-in apps
     "django.contrib.admin",
     "django.contrib.auth",
@@ -76,6 +72,10 @@ INSTALLED_APPS = [
     "certificates",
     "contact",
     "core",
+
+    # Cloudinary - keep at the end
+    "cloudinary",
+    "cloudinary_storage",
 ]
 
 
