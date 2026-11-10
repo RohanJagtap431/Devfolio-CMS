@@ -26,7 +26,7 @@ load_dotenv(BASE_DIR / ".env")
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 if not SECRET_KEY:
-    raise ValueError("SECRET_KEY is missing from .env file")
+    raise ValueError("SECRET_KEY is missing from environment variables")
 
 DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
@@ -37,6 +37,15 @@ ALLOWED_HOSTS = [
         "127.0.0.1,localhost"
     ).split(",")
     if host.strip()
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    origin.strip()
+    for origin in os.getenv(
+        "CSRF_TRUSTED_ORIGINS",
+        ""
+    ).split(",")
+    if origin.strip()
 ]
 
 
@@ -56,6 +65,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.sitemaps",
 
     # Custom apps
     "accounts",
@@ -66,8 +76,6 @@ INSTALLED_APPS = [
     "certificates",
     "contact",
     "core",
-    
-    "django.contrib.sitemaps",
 ]
 
 
@@ -131,7 +139,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 if not DATABASE_URL:
-    raise ValueError("DATABASE_URL is missing from .env file")
+    raise ValueError("DATABASE_URL is missing from environment variables")
 
 DATABASES = {
     "default": dj_database_url.parse(
@@ -179,10 +187,6 @@ USE_TZ = True
 # STATIC FILES
 # --------------------------------------------------
 
-# --------------------------------------------------
-# STATIC FILES
-# --------------------------------------------------
-
 STATIC_URL = "/static/"
 
 STATICFILES_DIRS = [
@@ -191,7 +195,7 @@ STATICFILES_DIRS = [
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-# Django 6.1 compatibility for Cloudinary storage package
+# Compatibility with django-cloudinary-storage
 STATICFILES_STORAGE = (
     "django.contrib.staticfiles.storage.StaticFilesStorage"
 )
@@ -250,6 +254,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # --------------------------------------------------
 
 if not DEBUG:
+
     SECURE_PROXY_SSL_HEADER = (
         "HTTP_X_FORWARDED_PROTO",
         "https",
@@ -257,3 +262,9 @@ if not DEBUG:
 
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
+
+    SECURE_SSL_REDIRECT = True
+
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+
+    X_FRAME_OPTIONS = "DENY"
